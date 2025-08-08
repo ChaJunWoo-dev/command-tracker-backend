@@ -3,13 +3,14 @@ import createError from "http-errors";
 
 import { MESSAGES } from "../config/constants.js";
 import env from "../config/env.js";
-import { bucket } from "../config/gcs.js";
+import getS3Stream from "../utils/getS3Stream.js";
 
 const trimVideo = async ({ videoId, trimStart, trimEnd }) => {
   const originalVideo = `${env.ORIGINAL_PREFIX}/${videoId}`;
 
   try {
-    const stream = bucket.file(originalVideo).createReadStream();
+    const stream = await getS3Stream(env.S3_BUCKET_NAME, originalVideo);
+
     const trimedStream = ffmpeg(stream)
       .setStartTime(trimStart)
       .duration(trimEnd - trimStart)

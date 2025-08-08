@@ -1,7 +1,6 @@
 import { HTTP_STATUS, MESSAGES } from "../config/constants.js";
 import env from "../config/env.js";
-import { storage } from "../config/gcs.js";
-import { getYoutubeVideo, saveVideoToGcs } from "../services/videoService.js";
+import { getYoutubeVideo, uploadVideoToS3 } from "../services/videoService.js";
 import generateSignedUrl from "../utils/generateSignedUrl.js";
 
 const uploadVideoRequests = async (req, res, next) => {
@@ -11,9 +10,9 @@ const uploadVideoRequests = async (req, res, next) => {
     const videoStream = await getYoutubeVideo(youtubeUrl);
     const fileName = `${env.ORIGINAL_PREFIX}/${req.videoId}`;
 
-    await saveVideoToGcs(videoStream, fileName);
+    await uploadVideoToS3(videoStream, fileName);
 
-    const signedUrl = await generateSignedUrl(storage, fileName);
+    const signedUrl = await generateSignedUrl(fileName);
 
     res.status(HTTP_STATUS.CREATED).json({
       status: HTTP_STATUS.CREATED,

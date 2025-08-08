@@ -1,9 +1,9 @@
 const MESSAGES = {
   SUCCESS: {
     VIDEO_LOAD: "영상 불러오기에 성공하였습니다.",
-    VIDEO_SAVED: "영상 저장에 성공하였습니다.",
-    VIDEO_REQUEST: "커맨드 분석 요청 성공",
-    VIDEO_ANALYSIS: "커맨드 분석 성공",
+    VIDEO_SAVED: "영상 저장에 성공했습니다.",
+    VIDEO_REQUEST: "커맨드 분석 요청을 완료했습니다.",
+    VIDEO_ANALYSIS: "커맨드 분석을 성공했습니다.",
   },
   ERROR: {
     NOT_FOUND_PAGE: "페이지를 찾을 수 없습니다.",
@@ -15,7 +15,7 @@ const MESSAGES = {
     VIDEO_NOT_FOUND: "해당 영상이 존재하지 않습니다.",
     VIDEO_ANALYSIS: "영상 분석에 실패했습니다.",
     FAILED_SAVE_VIDEO: "비디오 저장에 실패했습니다.",
-    INVALID_TRIM: "trim 범위가 잘못되었습니다.",
+    INVALID_TRIM: "편집 범위가 잘못되었습니다.",
 
     INACCESSIBLE_VIDEO: "접근이 제한된 영상입니다.",
     INVALID_VIDEO_TYPE: "지원하지 않는 유형의 영상입니다.",
@@ -25,6 +25,7 @@ const MESSAGES = {
     FAILED_CONSUME_EMAIL_QUEUE: "이메일 큐 처리 실패",
     FAILED_PUBLISH_MESSAGE: "메시지 발행에 실패했습니다.",
     FAILED_READ_TEMPLATE: "이메일 템플릿을 읽지 못했습니다.",
+    FAILED_GENERATE_SIGNED_URL: "임시 링크 발급에 실패했습니다.",
   },
 };
 
@@ -46,9 +47,9 @@ const HTTP_STATUS = {
   SERVER_ERROR: 500,
 };
 
-const GCS = {
-  SIGNED_URL: {
-    EXPIRE: 15 * 60 * 1000,
+const S3 = {
+  PRE_SIGNED_URL: {
+    EXPIRE: 15 * 60,
   },
 };
 
@@ -61,4 +62,4 @@ const REGEX_PATTERNS = {
   EMAIL: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i,
 };
 
-export { MESSAGES, HTTP_STATUS, GCS, REQUIRED_FIELDS, REGEX_PATTERNS, CODE };
+export { CODE, HTTP_STATUS, MESSAGES, REGEX_PATTERNS, REQUIRED_FIELDS, S3 };

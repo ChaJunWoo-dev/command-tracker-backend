@@ -1,10 +1,7 @@
 import { pipeline } from "stream/promises";
 
 import ytdl from "@distube/ytdl-core";
-import createError from "http-errors";
-
-import { MESSAGES } from "../config/constants.js";
-import { bucket } from "../config/gcs.js";
+import s3 from "../config/s3.js";
 
 const getYoutubeVideo = async (youtubeUrl) => {
   const videoStream = ytdl(youtubeUrl, { quality: "highestvideo" });
@@ -12,20 +9,22 @@ const getYoutubeVideo = async (youtubeUrl) => {
   return videoStream;
 };
 
-const saveVideoToGcs = async (videoStream, fileName) => {
-  try {
-    const writeStream = bucket.file(fileName).createWriteStream({
-      metadata: { contentType: "video/webm" },
-    });
+const uploadVideoToS3 = async (stream, fileName) => {
+  const pass = new PassThrough();
+  const upload = s3
+    .upload({
+      Bucket: env.S3_BUCKET_NAME,
+      Key: fileName,
+      Body: pass,
+      ContentType: "video/webm",
+    })
+    .promise();
 
-    writeStream.on("error", () => {
-      throw createError.InternalServerError(MESSAGES.ERROR.FAILED_SAVE_VIDEO);
-    });
+  await pipeline(stream, pass);
 
-    await pipeline(videoStream, writeStream);
-  } catch (error) {
-    throw error;
-  }
+  const result = await upload;
+
+  return result.Location;
 };
 
-export { getYoutubeVideo, saveVideoToGcs };
+export { getYoutubeVideo, uploadVideoToS3 };
