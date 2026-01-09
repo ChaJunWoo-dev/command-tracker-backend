@@ -1,9 +1,7 @@
 import createError from "http-errors";
 
 import { MESSAGES } from "../config/constants.js";
-import env from "../config/env.js";
 import { getChannel } from "../config/rabbitmq.js";
-import { sendEmail } from "../services/emailService.js";
 
 const publishToQueue = (queueName, message) => {
   const channel = getChannel();
@@ -37,11 +35,4 @@ const consumeFromQueue = (queueName, messageHandler) => {
   });
 };
 
-const consumeEmailQueue = () => {
-  consumeFromQueue(env.emailQueue, async (messageContent) => {
-    const { email, code, message: emailMessage, url } = messageContent;
-    await sendEmail({ email, code, message: emailMessage, url });
-  });
-};
-
-export { publishToQueue, consumeFromQueue, consumeEmailQueue };
+export { publishToQueue, consumeFromQueue };
