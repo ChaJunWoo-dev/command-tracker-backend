@@ -1,35 +1,22 @@
-import { HTTP_STATUS, MESSAGES } from "../config/constants.js";
-import env from "../config/env.js";
-import trimVideo from "../services/trimVideo.js";
-import { uploadVideoToS3 } from "../services/videoService.js";
+import { HTTP_STATUS, MESSAGES, QUEUE } from "../config/constants.js";
 import { publishToQueue } from "../utils/rabbitmqService.js";
 
-const editController = async (req, res, next) => {
-  const { videoId, trimStart, trimEnd, email, selectedCharacter } = req.body;
-
+const editController = (req, res, next) => {
   try {
-    const trimedStream = await trimVideo({
-      videoId,
-      trimStart,
-      trimEnd,
+    const { start, end, email, position, character } = req.body;
+    const s3Key = req.s3Key;
+
+    publishToQueue(QUEUE.VIDEO_PROCESS, {
       email,
+      key: s3Key,
+      position,
+      character,
+      trimStart: start,
+      trimEnd: end,
     });
-    const outputFileName = `${env.EDITED_PREFIX}/${email}${Date.now()}`;
-
-    await uploadVideoToS3(trimedStream, outputFileName);
-
-    const message = {
-      email,
-      file_name: outputFileName,
-      selected_character: selectedCharacter,
-    };
-
-    await publishToQueue(message);
 
     res.status(HTTP_STATUS.CREATED).json({
-      status: HTTP_STATUS.CREATED,
       message: MESSAGES.SUCCESS.VIDEO_REQUEST,
-      email,
     });
   } catch (err) {
     next(err);

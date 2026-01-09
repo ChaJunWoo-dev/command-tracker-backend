@@ -3,24 +3,33 @@ import createError from "http-errors";
 import {
   MESSAGES,
   REGEX_PATTERNS,
-  REQUIRED_FIELDS,
+  VALID_VALUES,
 } from "../../../config/constants.js";
-import { validateReqBody, validateFields } from "../../../utils/validation.js";
 
-const validateEditRequest = (req, _res, next) => {
+const editValidation = (req, res, next) => {
   try {
-    validateReqBody(req.body);
-    validateFields(req.body, REQUIRED_FIELDS.VIDEO_EDIT_REQUEST);
+    const { trimStart, trimEnd, position, character, email } = req.body;
 
-    const pattern = REGEX_PATTERNS.EMAIL;
+    if (!trimStart || !trimEnd || !position || !character || !email) {
+      throw createError.BadRequest(MESSAGES.ERROR.MISSING_REQUIRED_FIELD);
+    }
 
-    const { trimStart, trimEnd, email } = req.body;
+    const start = Number(trimStart);
+    const end = Number(trimEnd);
 
-    if (Number(trimStart) >= Number(trimEnd)) {
+    if (isNaN(start) || isNaN(end) || start < 0 || end < 0 || start >= end) {
       throw createError.BadRequest(MESSAGES.ERROR.INVALID_TRIM);
     }
 
-    if (pattern.test(email) === false) {
+    if (!VALID_VALUES.POSITION.includes(position)) {
+      throw createError.BadRequest(MESSAGES.ERROR.MISSING_REQUIRED_FIELD);
+    }
+
+    if (!VALID_VALUES.CHARACTER.includes(character)) {
+      throw createError.BadRequest(MESSAGES.ERROR.MISSING_REQUIRED_FIELD);
+    }
+
+    if (!REGEX_PATTERNS.EMAIL.test(email)) {
       throw createError.BadRequest(MESSAGES.ERROR.INVALID_EMAIL);
     }
 
@@ -30,4 +39,4 @@ const validateEditRequest = (req, _res, next) => {
   }
 };
 
-export default validateEditRequest;
+export default editValidation;
