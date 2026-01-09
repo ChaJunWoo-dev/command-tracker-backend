@@ -1,32 +1,45 @@
 import amqp from "amqplib";
 import createError from "http-errors";
 
-import { HTTP_STATUS, MESSAGES } from "./constants.js";
+import { HTTP_STATUS, MESSAGES, QUEUE } from "./constants.js";
 import env from "./env.js";
 
 let connection = null;
 let channel = null;
+let reconnecting = false;
+
+const reconnect = () => {
+  if (reconnecting) return;
+  reconnecting = true;
+
+  connection = null;
+  channel = null;
+
+  setTimeout(() => {
+    reconnecting = false;
+    connectRabbitMQ();
+  }, 5000);
+};
 
 const connectRabbitMQ = async () => {
+  if (connection || channel) return;
+
   try {
     connection = await amqp.connect(env.rabbitmqUrl);
-    channel = await connection.createChannel();
+    channel = await connection.createConfirmChannel();
 
-    connection.on("error", () => {
-      connection = null;
-      channel = null;
-    });
+    connection.on("error", reconnect);
+    connection.on("close", reconnect);
 
-    connection.on("close", () => {
-      setTimeout(connectRabbitMQ, 5000);
-    });
+    channel.on("error", reconnect);
+    channel.on("close", reconnect);
 
-    const { analyzeQueue, emailQueue } = env;
+    channel.prefetch(1);
 
-    await channel.assertQueue(analyzeQueue, { durable: true });
-    await channel.assertQueue(emailQueue, { durable: true });
-  } catch {
-    setTimeout(connectRabbitMQ, 5000);
+    await channel.assertQueue(QUEUE.VIDEO_PROCESS, { durable: true });
+    await channel.assertQueue(QUEUE.VIDEO_RESULT, { durable: true });
+  } catch (err) {
+    reconnect();
   }
 };
 
@@ -36,5 +49,14 @@ const getChannel = () => {
   }
   return channel;
 };
+
+process.on("SIGINT", async () => {
+  try {
+    if (channel) await channel.close();
+    if (connection) await connection.close();
+  } finally {
+    process.exit(0);
+  }
+});
 
 export { connectRabbitMQ, getChannel };
