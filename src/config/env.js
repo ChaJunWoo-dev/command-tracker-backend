@@ -9,6 +9,7 @@ const config = {
   rabbitmqUrl: process.env.RABBITMQ_URL,
   email_user: process.env.EMAIL_USER,
   email_pass: process.env.EMAIL_PASS,
+  JWT_SECRET: process.env.JWT_SECRET,
 };
 
 export default config;

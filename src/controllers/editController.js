@@ -3,7 +3,8 @@ import { publishToQueue } from "../utils/rabbitmqService.js";
 
 const editController = (req, res, next) => {
   try {
-    const { start, end, email, position, character } = req.body;
+    const { trimStart, trimEnd, email, position, character } =
+      req.validatedFields;
     const s3Key = req.s3Key;
 
     publishToQueue(QUEUE.VIDEO_PROCESS, {
@@ -11,8 +12,8 @@ const editController = (req, res, next) => {
       key: s3Key,
       position,
       character,
-      trimStart: start,
-      trimEnd: end,
+      trimStart: Number(trimStart),
+      trimEnd: Number(trimEnd),
     });
 
     res.status(HTTP_STATUS.CREATED).json({

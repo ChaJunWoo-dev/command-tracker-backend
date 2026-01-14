@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(`${env.API_PREFIX}/edit`, editRoutes);
+app.use(`${env.API_PREFIX}/edit-video`, editRoutes);
 
 app.use((req, res, next) => {
   next(createError(HTTP_STATUS.NOT_FOUND, MESSAGES.ERROR.NOT_FOUND_PAGE));

@@ -10,7 +10,13 @@ const editValidation = (req, res, next) => {
   try {
     const { trimStart, trimEnd, position, character, email } = req.body;
 
-    if (!trimStart || !trimEnd || !position || !character || !email) {
+    if (
+      trimStart === undefined ||
+      !trimEnd === undefined ||
+      !position ||
+      !character ||
+      !email
+    ) {
       throw createError.BadRequest(MESSAGES.ERROR.MISSING_REQUIRED_FIELD);
     }
 
@@ -22,11 +28,11 @@ const editValidation = (req, res, next) => {
     }
 
     if (!VALID_VALUES.POSITION.includes(position)) {
-      throw createError.BadRequest(MESSAGES.ERROR.MISSING_REQUIRED_FIELD);
+      throw createError.BadRequest(MESSAGES.ERROR.INVALID_POSITION);
     }
 
     if (!VALID_VALUES.CHARACTER.includes(character)) {
-      throw createError.BadRequest(MESSAGES.ERROR.MISSING_REQUIRED_FIELD);
+      throw createError.BadRequest(MESSAGES.ERROR.INVALID_CHARACTER);
     }
 
     if (!REGEX_PATTERNS.EMAIL.test(email)) {
