@@ -15,6 +15,7 @@ const MESSAGES = {
 
     FAILED_UPLOAD_VIDEO: "비디오 업로드에 실패했습니다.",
     INVALID_TRIM: "편집 범위가 잘못되었습니다.",
+    LIMIT_FILE_SIZE: "파일 크기가 너무 큽니다. 최대 500MB",
     FAILED_READ_TEMPLATE: "이메일 템플릿 읽기에 실패했습니다.",
 
     INVALID_TOKEN: "권한이 없습니다.",

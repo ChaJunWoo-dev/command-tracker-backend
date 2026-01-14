@@ -27,6 +27,11 @@ const editValidation = (req, res, next) => {
       throw createError.BadRequest(MESSAGES.ERROR.INVALID_TRIM);
     }
 
+    const MAX_TRIM_SECONDS = 30 * 60;
+    if (end - start > MAX_TRIM_SECONDS) {
+      throw createError.BadRequest(MESSAGES.ERROR.TRIM_TOO_LONG);
+    }
+
     if (!VALID_VALUES.POSITION.includes(position)) {
       throw createError.BadRequest(MESSAGES.ERROR.INVALID_POSITION);
     }
