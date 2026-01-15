@@ -5,11 +5,11 @@ const editController = (req, res, next) => {
   try {
     const { trimStart, trimEnd, email, position, character } =
       req.validatedFields;
-    const s3Key = req.s3Key;
+    const filename = req.filename;
 
     publishToQueue(QUEUE.VIDEO_PROCESS, {
       email,
-      key: s3Key,
+      filename,
       position,
       character,
       trimStart: Number(trimStart),

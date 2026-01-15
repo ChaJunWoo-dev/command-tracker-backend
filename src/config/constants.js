@@ -51,6 +51,11 @@ const REGEX_PATTERNS = {
 
 const VIDEO_MAX_SIZE = 500 * 1024 * 1024;
 
+const S3_KEY = {
+  ORIGINAL_PREFIX: "original",
+  PROCESSED_PREFIX: "processed"
+}
+
 const VALID_VALUES = {
   POSITION: ["left", "right"],
   CHARACTER: [
@@ -92,4 +97,5 @@ export {
   VIDEO_MAX_SIZE,
   QUEUE,
   JWT,
+  S3_KEY,
 };

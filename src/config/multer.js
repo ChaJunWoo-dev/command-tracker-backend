@@ -4,17 +4,38 @@ import { randomUUID } from "crypto";
 
 import s3Client from "./s3.js";
 import env from "./env.js";
-import { MESSAGES, VIDEO_MAX_SIZE } from "./constants.js";
+import { MESSAGES, VIDEO_MAX_SIZE, S3_KEY } from "./constants.js";
 
 const upload = multer({
   storage: multerS3({
     s3: s3Client,
     bucket: env.S3_BUCKET_NAME,
     key: function (req, file, cb) {
-      const s3Key = `${Date.now()}_${randomUUID()}`;
-      req.s3Key = s3Key;
-      cb(null, s3Key);
-    },
+      let ext = "";
+
+      switch (file.mimetype) {
+        case "video/mp4":
+          ext = ".mp4";
+          break;
+        case "video/webm":
+          ext = ".webm";
+          break;
+        case "video/quicktime":
+          ext = ".mov";
+          break;
+        case "video/x-msvideo":
+          ext = ".avi";
+          break;
+        case "video/x-matroska":
+          ext = ".mkv";
+          break;
+        default:
+          ext = "";
+      }
+      const filename = `${S3_KEY.ORIGINAL_PREFIX}/${Date.now()}_${randomUUID()}${ext}`;
+      req.filename = filename;
+      cb(null, filename);
+    }
   }),
   limits: {
     fileSize: VIDEO_MAX_SIZE,
