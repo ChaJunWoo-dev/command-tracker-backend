@@ -7,8 +7,9 @@ import createError from "http-errors";
 import mjml2html from "mjml";
 import nodemailer from "nodemailer";
 
-import { MESSAGES, CODE } from "../config/constants.js";
+import { MESSAGES } from "../config/constants.js";
 import env from "../config/env.js";
+import { generatePresignedUrl } from "../utils/presignedUrlService.js";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -21,12 +22,12 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const readEmailTemplate = async ({ code, message, url }) => {
+const readEmailTemplate = async ({ detail, resultVideoUrl }) => {
   try {
-    if (code === CODE.ERROR.FAILED_ANALYZE) {
+    if (detail) {
       const filePath = path.join(dirname, "../views", "errorTemplate.mjml.ejs");
       const template = await fs.readFile(filePath, "utf-8");
-      const htmlContent = ejs.render(template, { message });
+      const htmlContent = ejs.render(template, { message: detail });
       const { html } = mjml2html(htmlContent, {
         validationLevel: "strict",
       });
@@ -35,7 +36,7 @@ const readEmailTemplate = async ({ code, message, url }) => {
     }
     const filePath = path.join(dirname, "../views", "emailTemplate.mjml.ejs");
     const template = await fs.readFile(filePath, "utf-8");
-    const htmlContent = ejs.render(template, { url });
+    const htmlContent = ejs.render(template, { url: resultVideoUrl });
     const { html } = mjml2html(htmlContent, {
       validationLevel: "strict",
     });
@@ -46,9 +47,9 @@ const readEmailTemplate = async ({ code, message, url }) => {
   }
 };
 
-const sendEmail = async ({ email, code, message, url }) => {
+const sendEmail = async ({ email, detail, resultVideoUrl }) => {
   try {
-    const html = await readEmailTemplate({ code, message, url });
+    const html = await readEmailTemplate({ detail, resultVideoUrl });
     const mailOptions = {
       from: env.email_user,
       to: email,

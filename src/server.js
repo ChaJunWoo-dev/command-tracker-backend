@@ -13,7 +13,7 @@ const startServer = async () => {
     consumeFromQueue(QUEUE.VIDEO_RESULT, async (messageContent) => {
       const { email, detail, key } = messageContent;
       const resultVideoUrl = await generatePresignedUrl(key);
-      console.log(email, detail, resultVideoUrl);
+
       await sendEmail({ email, detail, resultVideoUrl });
     });
 
