@@ -3,6 +3,7 @@ import { QUEUE } from "./config/constants.js";
 import env from "./config/env.js";
 import { connectRabbitMQ } from "./config/rabbitmq.js";
 import { sendEmail } from "./services/emailService.js";
+import { generatePresignedUrl } from "./utils/presignedUrlService.js";
 import { consumeFromQueue } from "./utils/rabbitmqService.js";
 
 const startServer = async () => {
@@ -10,8 +11,10 @@ const startServer = async () => {
     await connectRabbitMQ();
 
     consumeFromQueue(QUEUE.VIDEO_RESULT, async (messageContent) => {
-      const { email, code, message: emailMessage, url } = messageContent;
-      await sendEmail({ email, code, message: emailMessage, url });
+      const { email, detail, key } = messageContent;
+      const resultVideoUrl = await generatePresignedUrl(key);
+      console.log(email, detail, resultVideoUrl);
+      await sendEmail({ email, detail, resultVideoUrl });
     });
 
     const { port } = env;

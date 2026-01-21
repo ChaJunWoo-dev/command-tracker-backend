@@ -2,9 +2,9 @@ import multer from "multer";
 import multerS3 from "multer-s3";
 import { randomUUID } from "crypto";
 
-import s3Client from "./s3.js";
-import env from "./env.js";
-import { MESSAGES, VIDEO_MAX_SIZE, S3_KEY } from "./constants.js";
+import s3Client from "../../config/s3.js";
+import env from "../../config/env.js";
+import { MESSAGES, VIDEO_MAX_SIZE, S3_KEY } from "../../config/constants.js";
 
 const upload = multer({
   storage: multerS3({

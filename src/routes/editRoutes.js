@@ -1,6 +1,6 @@
 import express from "express";
 
-import upload from "../config/multer.js";
+import upload from "./middleware/multer.js";
 import editValidation from "./middleware/validation/editValidation.js";
 import tokenValidation from "./middleware/validation/tokenValidation.js";
 import editPrepareController from "../controllers/editPrepareController.js";
