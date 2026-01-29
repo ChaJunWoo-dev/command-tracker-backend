@@ -1,7 +1,7 @@
 import { MESSAGES } from "../config/constants.js";
 import { generateToken } from "../utils/tokenService.js";
 
-const editPrepareController = (req, res, next) => {
+const videoPrepareController = (req, res, next) => {
   try {
     const { trimStart, trimEnd, position, character, email } = req.body;
 
@@ -22,4 +22,4 @@ const editPrepareController = (req, res, next) => {
   }
 };
 
-export default editPrepareController;
+export default videoPrepareController;

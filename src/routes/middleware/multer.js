@@ -32,10 +32,12 @@ const upload = multer({
         default:
           ext = "";
       }
-      const filename = `${S3_KEY.ORIGINAL_PREFIX}/${Date.now()}_${randomUUID()}${ext}`;
+      const filename = `${Date.now()}_${randomUUID()}${ext}`;
+      const s3Key = `${S3_KEY.ORIGINAL_PREFIX}/${filename}`;
+      cb(null, s3Key);
+
       req.filename = filename;
-      cb(null, filename);
-    }
+    },
   }),
   limits: {
     fileSize: VIDEO_MAX_SIZE,

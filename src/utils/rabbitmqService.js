@@ -29,7 +29,6 @@ const consumeFromQueue = (queueName, messageHandler) => {
       await messageHandler(messageContent);
       channel.ack(msg);
     } catch (err) {
-      //todo: 재시도 큐로 전송
       channel.nack(msg, false, false);
     }
   });

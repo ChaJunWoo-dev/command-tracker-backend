@@ -6,7 +6,7 @@ import multer from "multer";
 
 import { HTTP_STATUS, MESSAGES } from "./config/constants.js";
 import env from "./config/env.js";
-import editRoutes from "./routes/editRoutes.js";
+import videoRoutes from "./routes/videoRoutes.js";
 
 const app = express();
 app.use("/images", express.static("public/images"));
@@ -14,13 +14,15 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(`${env.API_PREFIX}/edit-video`, editRoutes);
+app.use(`${env.API_PREFIX}/video`, videoRoutes);
 
 app.use((req, res, next) => {
   next(createError(HTTP_STATUS.NOT_FOUND, MESSAGES.ERROR.NOT_FOUND_PAGE));
 });
 
 app.use((err, req, res, next) => {
+  console.error(err);
+
   if (err instanceof multer.MulterError) {
     if (err.code === "LIMIT_FILE_SIZE") {
       return res.status(400).json({

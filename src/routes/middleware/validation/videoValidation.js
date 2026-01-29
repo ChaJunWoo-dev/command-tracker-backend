@@ -6,7 +6,7 @@ import {
   VALID_VALUES,
 } from "../../../config/constants.js";
 
-const editValidation = (req, res, next) => {
+const videoValidation = (req, res, next) => {
   try {
     const { trimStart, trimEnd, position, character, email } = req.body;
 
@@ -50,4 +50,4 @@ const editValidation = (req, res, next) => {
   }
 };
 
-export default editValidation;
+export default videoValidation;
